@@ -1,19 +1,24 @@
-function combine_ar(x, y, l) {
-  const ar = [], [xl, yl] = [x.length, y.length];
+let ar;
+function combine_ar(x, y, l, f) {
+  const [xl, yl] = [x.length, y.length];
   if (!l) l = xl * yl;
-  const last_col = "XFD", last_row = 1048576;
-  let limit = last_col;
-  if (!isNaN(y[0])) limit += last_row;
+  if (!f) {
+    ar = [];
+    f = (a, b) => ar.push(a + b);
+  } else {
+    ar = document.createDocumentFragment();
+  }
+  let i = 0;
   for (let a = 0; a < xl; a++) {
     for (let b = 0; b < yl; b++) {
-      const xy = x[a] + y[b];
-      ar.push(xy);
-      if (ar.length === l || xy === limit) return ar;
+      i++;
+      f(x[a], y[b]);
+      if (i === l) return ar;
     }
   }
 }
 
-function build_colHeads(cc = 16384) {
+function build_colHeads(cc = 50) {
   let colHeads;
   const al = 26,
         abc = [...Array(al)].map((_, i) => String.fromCharCode(i + 65));
@@ -40,4 +45,15 @@ function build_colHeads(cc = 16384) {
   }
   return colHeads;
 }
-console.log(build_colHeads());// TEMP:
+
+function helper(a, b) {
+  ar.appendChild(document.createElement('p'));// TEMP:
+}
+
+function build_cells(cols, rr = 25) {
+  cols = build_colHeads(cols);
+  const rows = [...Array(++rr).keys()].splice(1);
+
+  return combine_ar(cols, rows, NaN, helper);
+}
+console.log(build_cells());// TEMP:
