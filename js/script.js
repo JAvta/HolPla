@@ -1,19 +1,19 @@
-let ar;
-function combine_ar(x, y, l, f) {
+let xy;
+function combine_xy(x, y, l, f) {
   const [xl, yl] = [x.length, y.length];
   if (!l) l = xl * yl;
   if (!f) {
-    ar = [];
-    f = (a, b) => ar.push(a + b);
+    xy = [];
+    f = (a, b) => xy.push(a + b);
   } else {
-    ar = document.createDocumentFragment();
+    xy = document.createDocumentFragment();
   }
   let i = 0;
   for (let a = 0; a < xl; a++) {
     for (let b = 0; b < yl; b++) {
       i++;
       f(x[a], y[b]);
-      if (i === l) return ar;
+      if (i === l) return xy;
     }
   }
 }
@@ -37,7 +37,7 @@ function get_headers(cc = 50) {
       c.h1 = cc - al;
     }
     Object.keys(c).slice(1).forEach((h, i) => {
-      c[h] = combine_ar(abc, c['h' + i], c[h]);
+      c[h] = combine_xy(abc, c['h' + i], c[h]);
       headers.push(...c[h]);
     });
   } else {
@@ -47,13 +47,13 @@ function get_headers(cc = 50) {
 }
 
 function helper(a, b) {
-  ar.appendChild(document.createElement('p'));// TEMP:
+  xy.appendChild(document.createElement('p'));// TEMP:
 }
 
 function build_cells(cols, rr = 25) {
   cols = get_headers(cols);
   const rows = [...Array(++rr).keys()].splice(1);
 
-  return combine_ar(cols, rows, NaN, helper);
+  return combine_xy(cols, rows, NaN, helper);
 }
 console.log(build_cells());// TEMP:
