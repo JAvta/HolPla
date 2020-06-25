@@ -18,13 +18,13 @@ function combine_ar(x, y, l, f) {
   }
 }
 
-function build_colHeads(cc = 50) {
-  let colHeads;
+function get_headers(cc = 50) {
+  let headers;
   const al = 26,
         abc = [...Array(al)].map((_, i) => String.fromCharCode(i + 65));
   if (cc > al) {
     const c = {}, alP2 = al * al, sumA = al + alP2;
-    [colHeads, c.h0] = [...Array(2)].map(() => [...abc]);
+    [headers, c.h0] = [...Array(2)].map(() => [...abc]);
     if (cc > sumA) {
       c.h1 = alP2;
       const alP3 = alP2 * al;
@@ -38,12 +38,12 @@ function build_colHeads(cc = 50) {
     }
     Object.keys(c).slice(1).forEach((h, i) => {
       c[h] = combine_ar(abc, c['h' + i], c[h]);
-      colHeads.push(...c[h]);
+      headers.push(...c[h]);
     });
   } else {
-    colHeads = abc.slice(0, cc);
+    headers = abc.slice(0, cc);
   }
-  return colHeads;
+  return headers;
 }
 
 function helper(a, b) {
@@ -51,7 +51,7 @@ function helper(a, b) {
 }
 
 function build_cells(cols, rr = 25) {
-  cols = build_colHeads(cols);
+  cols = get_headers(cols);
   const rows = [...Array(++rr).keys()].splice(1);
 
   return combine_ar(cols, rows, NaN, helper);
