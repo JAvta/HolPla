@@ -1,19 +1,9 @@
-let xy;
-function combine_xy(x, y, l, f) {
-  const [xl, yl] = [x.length, y.length];
-  if (!l) l = xl * yl;
-  if (!f) {
-    xy = [];
-    f = (a, b) => xy.push(a + b);
-  } else {
-    xy = document.createDocumentFragment();
-  }
-  let i = 0;
-  for (let a = 0; a < xl; a++) {
-    for (let b = 0; b < yl; b++) {
-      i++;
-      f(x[a], y[b]);
-      if (i === l) return xy;
+function combine_xy(x, y, l) {
+  const xy = [];
+  for (let a = 0; a < x.length; a++) {
+    for (let b = 0; b < y.length; b++) {
+      xy.push(x[a] + y[b]);
+      if (xy.length === l) return xy;// NOTE: Array
     }
   }
 }
@@ -24,7 +14,7 @@ function get_headers(cc = 50) {
         abc = [...Array(al)].map((_, i) => String.fromCharCode(i + 65));
   if (cc > al) {
     const c = {}, alP2 = al * al, sumA = al + alP2;
-    [headers, c.h0] = [...Array(2)].map(() => [...abc]);
+    [headers, c.h0].forEach(() => [...abc]);
     if (cc > sumA) {
       c.h1 = alP2;
       const alP3 = alP2 * al;
@@ -43,17 +33,25 @@ function get_headers(cc = 50) {
   } else {
     headers = abc.slice(0, cc);
   }
-  return headers;
+  return headers;// NOTE: Array
 }
 
-function helper(a, b) {
-  xy.appendChild(document.createElement('p'));// TEMP:
+function build_cells(c, r = 25) {
+  c = get_headers(c);
+  r = [...Array(++r).keys()].slice(1);
+  const table = document.createElement('table');
+  for (let a = 0; a < r.length; a++) {
+    const tr = document.createElement('tr');
+    for (let b = 0; b < c.length; b++) {
+      const td = document.createElement('td');
+      td.innerHTML = c[b] + r[a];// TEMP:
+      td.classList.add('[', 'js', c[b], r[a], ']');
+      td.id = c[b] + r[a];
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+  return table;// NOTE: HTML
 }
 
-function build_cells(cols, rr = 25) {
-  cols = get_headers(cols);
-  const rows = [...Array(++rr).keys()].splice(1);
-
-  return combine_xy(cols, rows, NaN, helper);
-}
-console.log(build_cells());// TEMP:
+document.body.appendChild(build_cells(9,9));// TEMP:
