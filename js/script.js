@@ -14,7 +14,7 @@ function get_headers(cc = 50) {
         abc = [...Array(al)].map((_, i) => String.fromCharCode(i + 65));
   if (cc > al) {
     const c = {}, alP2 = al * al, sumA = al + alP2;
-    [headers, c.h0].forEach(() => [...abc]);
+    [headers, c.h0] = [[...abc], [...abc]];
     if (cc > sumA) {
       c.h1 = alP2;
       const alP3 = alP2 * al;
@@ -54,4 +54,4 @@ function build_table(c, r = 25) {
   return table;// NOTE: HTML
 }
 
-document.body.appendChild(build_table(9,9));// TEMP:
+document.body.appendChild(build_table());// TEMP:
