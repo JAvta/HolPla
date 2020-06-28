@@ -1,3 +1,25 @@
 body {
   margin: 23px;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+table, td {
+  border: 1px solid black;
+}
+
+tr {
+  vertical-align: middle;
+}
+
+td {
+  font-size: 12px;
+  font-weight: bold;
+  font-family: Consolas;
+  text-align: center;
+  padding: 0;
+  height: 22px;
+  width: 22px;
+}
