@@ -36,7 +36,7 @@ function get_headers(cc = 50) {
   return headers;// NOTE: Array
 }
 
-function build_cells(c, r = 25) {
+function build_table(c, r = 25) {
   c = get_headers(c);
   r = [...Array(++r).keys()].slice(1);
   const table = document.createElement('table');
@@ -54,4 +54,4 @@ function build_cells(c, r = 25) {
   return table;// NOTE: HTML
 }
 
-document.body.appendChild(build_cells(9,9));// TEMP:
+document.body.appendChild(build_table(9,9));// TEMP:
