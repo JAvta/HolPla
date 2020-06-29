@@ -39,7 +39,7 @@ function build_table(c, r = 25) {
     const tr = document.createElement('tr');
     for (let b = 0; b < c.length; b++) {
       const td = document.createElement('td');
-      td.innerHTML = c[b] + r[a];// TEMP:
+      // td.innerHTML = c[b] + r[a];// TEMP:
       td.classList.add('[', 'js', c[b], r[a], ']');
       td.id = c[b] + r[a];
       tr.appendChild(td);
@@ -50,3 +50,14 @@ function build_table(c, r = 25) {
 }
 
 document.body.appendChild(build_table());// TEMP:
+
+function get_dayNames(locale = 'en-GB') {
+  const d = new Date(Date.UTC(2020, 5, 29)), dayNames = [];
+  for (let i = 7; i--;) {
+    dayNames.push(d.toLocaleDateString(
+      locale, {weekday: 'short'}).slice(0, 2).toUpperCase());
+    d.setDate(d.getDate() + 1);
+  }
+  return dayNames;// NOTE: Array
+}
+console.log(get_dayNames());// TEMP:
