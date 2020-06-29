@@ -1,9 +1,9 @@
-function combine_xy(x, y, l) {
-  const xy = [];
-  for (let a = 0; a < x.length; a++) {
-    for (let b = 0; b < y.length; b++) {
-      xy.push(x[a] + y[b]);
-      if (xy.length === l) return xy;// NOTE: Array
+function combine_abx(a, b, x) {
+  const ab = [];
+  for (let o = 0; o < a.length; o++) {
+    for (let i = 0; i < b.length; i++) {
+      ab.push(a[o] + b[i]);
+      if (ab.length === x) return ab;// NOTE: Array
     }
   }
 }
@@ -22,7 +22,7 @@ function get_headers(c = 50) {
       z.h1 = c - abc;
     }
     Object.keys(z).slice(1).forEach((k, i) => {
-      z[k] = combine_xy(z.h0, z['h' + i], z[k]);
+      z[k] = combine_abx(z.h0, z['h' + i], z[k]);
       headers.push(...z[k]);
     });
   } else {
