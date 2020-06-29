@@ -8,30 +8,25 @@ function combine_xy(x, y, l) {
   }
 }
 
-function get_headers(cc = 50) {
-  let headers;
-  const al = 26,
-        abc = [...Array(al)].map((_, i) => String.fromCharCode(i + 65));
-  if (cc > al) {
-    const c = {}, alP2 = al * al, sumA = al + alP2;
-    [headers, c.h0] = [[...abc], [...abc]];
-    if (cc > sumA) {
-      c.h1 = alP2;
-      const alP3 = alP2 * al;
-      if (cc > sumA + alP3) {
-        c.h2 = alP3;
-      } else {
-        c.h2 = cc - sumA;
-      }
+function get_headers(c = 50) {
+  const abc = 26, z = {}, headers = [];
+  z.h0 = [...Array(abc).keys()].map(i => String.fromCharCode(i + 65));
+  if (c > abc) {
+    headers.push(...z.h0);
+    const abcP2 = abc * abc, sumAbc = abc + abcP2;
+    if (c > sumAbc) {
+      z.h1 = abcP2;
+      const abcP3 = abcP2 * abc;
+      c > sumAbc + abcP3 ? z.h2 = abcP3 : z.h2 = c - sumAbc;
     } else {
-      c.h1 = cc - al;
+      z.h1 = c - abc;
     }
-    Object.keys(c).slice(1).forEach((h, i) => {
-      c[h] = combine_xy(abc, c['h' + i], c[h]);
-      headers.push(...c[h]);
+    Object.keys(z).slice(1).forEach((k, i) => {
+      z[k] = combine_xy(z.h0, z['h' + i], z[k]);
+      headers.push(...z[k]);
     });
   } else {
-    headers = abc.slice(0, cc);
+    headers.push(z.h0.slice(0, c));
   }
   return headers;// NOTE: Array
 }
