@@ -53,13 +53,13 @@ function fill_data(data, target) {
 }
 
 function get_data(r) {
-  const year = new Date().getFullYear(), data = {};
-  data._1 = [...r.keys()].map(i => r[i] = [r[i]]);
-  data.a0 = [...headers].slice(1);
-  data.a1 = [year, ...get_days(), "..."];
-  data.ai1 = year.toString().split('');
-  Object.keys(data).forEach(k => {
-    fill_data(data[k], k);
+  const year = new Date().getFullYear(), da = {};
+  da._1 = [...r.keys()].map(i => r[i] = [r[i]]);
+  da.a0 = [...headers].slice(1);
+  da.a1 = [year, ...get_days(), "..."];
+  da.ai1 = year.toString().split('');
+  Object.keys(da).forEach(k => {
+    fill_data(da[k], k);
   });
 }
 
@@ -90,4 +90,5 @@ Confirm before replacing data
 Undo+redo
 Highlight hover row
 Highlight hover month's holidays
+Count days off per month
 */
