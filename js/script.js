@@ -8,8 +8,9 @@ function combine_abx(a, b, x) {
   }
 }
 
+const headers = ['_']
 function get_headers(c = 50) {
-  const abc = 26, z = {}, headers = [];
+  const abc = 26, z = {};
   z.h0 = [...Array(abc).keys()].map(i => String.fromCharCode(i + 65));
   if (c > abc) {
     headers.push(...z.h0);
@@ -31,26 +32,6 @@ function get_headers(c = 50) {
   return headers;// NOTE: Array
 }
 
-function build_table(c, r = 25) {
-  c = get_headers(c);
-  r = [...Array(++r).keys()].slice(1);
-  const table = document.createElement('table');
-  for (let a = 0; a < r.length; a++) {
-    const tr = document.createElement('tr');
-    for (let b = 0; b < c.length; b++) {
-      const td = document.createElement('td');
-      // td.innerHTML = c[b] + r[a];// TEMP:
-      td.classList.add('[', 'js', c[b], r[a], ']');
-      td.id = c[b] + r[a];
-      tr.appendChild(td);
-    }
-    table.appendChild(tr);
-  }
-  return table;// NOTE: HTML
-}
-
-document.body.appendChild(build_table());// TEMP:
-
 function get_dayNames(locale = 'en-GB') {
   const d = new Date(Date.UTC(2020, 5, 29)), dayNames = [];
   for (let i = 7; i--;) {
@@ -60,4 +41,53 @@ function get_dayNames(locale = 'en-GB') {
   }
   return dayNames;// NOTE: Array
 }
-console.log(get_dayNames());// TEMP:
+
+const fill = {};
+function fill_data(data, target) {
+  if (!Array.isArray(data[0])) data = [data];
+  let [h, n] = target.match(/[_A-Z]+|[0-9]+/gi);
+  h = headers.indexOf(h.toUpperCase());
+  n = Number(n);
+  data.forEach((row, r) => row.forEach(
+    (cell, c) => fill[headers[c + h] + (r + n)] = cell));
+}
+
+function get_data(r) {
+  const year = new Date().getFullYear(), data = {};
+  data._1 = [...r.keys()].map(i => r[i] = [r[i]]);
+  data.a0 = [...headers].slice(1);
+  data.a1 = [year, ...get_dayNames(), "..."];
+  data.ai1 = year.toString().split('');
+  Object.keys(data).forEach(k => {
+    fill_data(data[k], k);
+  });
+}
+
+function build_table(c, r = 25) {
+  c = get_headers(c);
+  r = [...Array(++r).keys()];
+  get_data(r.slice(1));
+  const table = document.createElement('table');
+  for (let a = 0; a < r.length; a++) {
+    const tr = document.createElement('tr');
+    for (let b = 0; b < c.length; b++) {
+      const td = document.createElement('td'), cell = c[b] + r[a];
+      if (cell in fill) td.innerHTML = fill[cell];
+      td.classList.add(c[b], 'r' + r[a]);
+      td.id = cell;
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+  return table;// NOTE: HTML
+}
+
+document.body.appendChild(build_table());// TEMP:
+
+/*
+NOTES OF POSSIBLE UPCOMING FEATURES:
+Confirm before replacing data
+Undo+redo
+Highlight hover row
+Highlight hover month's holidays
+*/
