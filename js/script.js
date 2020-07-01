@@ -32,14 +32,14 @@ function get_headers(c = 50) {
   return headers;// NOTE: Array
 }
 
-function get_dayNames(locale = 'en-GB') {
-  const d = new Date(Date.UTC(2020, 5, 29)), dayNames = [];
+function get_days(locale = 'en-GB') {
+  const d = new Date(Date.UTC(2020, 5, 29)), days = [];
   for (let i = 7; i--;) {
-    dayNames.push(d.toLocaleDateString(
+    days.push(d.toLocaleDateString(
       locale, {weekday: 'short'}).slice(0, 2).toUpperCase());
     d.setDate(d.getDate() + 1);
   }
-  return dayNames;// NOTE: Array
+  return days;// NOTE: Array
 }
 
 const fill = {};
@@ -56,7 +56,7 @@ function get_data(r) {
   const year = new Date().getFullYear(), data = {};
   data._1 = [...r.keys()].map(i => r[i] = [r[i]]);
   data.a0 = [...headers].slice(1);
-  data.a1 = [year, ...get_dayNames(), "..."];
+  data.a1 = [year, ...get_days(), "..."];
   data.ai1 = year.toString().split('');
   Object.keys(data).forEach(k => {
     fill_data(data[k], k);
