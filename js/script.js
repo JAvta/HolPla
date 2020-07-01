@@ -3,7 +3,7 @@ function combine_abx(a, b, x) {
   for (let o = 0; o < a.length; o++) {
     for (let i = 0; i < b.length; i++) {
       ab.push(a[o] + b[i]);
-      if (ab.length === x) return ab;// NOTE: Array
+      if (ab.length === x) return ab;
     }
   }
 }
@@ -29,7 +29,7 @@ function get_headers(c = 50) {
   } else {
     headers.push(z.h0.slice(0, c));
   }
-  return headers;// NOTE: Array
+  return headers;
 }
 
 function get_days(locale = 'en-GB') {
@@ -39,7 +39,7 @@ function get_days(locale = 'en-GB') {
       locale, {weekday: 'short'}).slice(0, 2).toUpperCase());
     d.setDate(d.getDate() + 1);
   }
-  return days;// NOTE: Array
+  return days;
 }
 
 const fill = {};
@@ -79,10 +79,10 @@ function build_table(c, r = 25) {
     }
     table.appendChild(tr);
   }
-  return table;// NOTE: HTML
+  return table;
 }
 
-document.body.appendChild(build_table());// TEMP:
+document.body.appendChild(build_table());
 
 /*
 NOTES OF POSSIBLE UPCOMING FEATURES:
