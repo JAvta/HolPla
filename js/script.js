@@ -54,7 +54,7 @@ function fill_data(data, target) {
 
 function get_data(r) {
   const year = new Date().getFullYear(), da = {};
-  da._1 = [...r.keys()].map(i => r[i] = [r[i]]);
+  da._1 = [...r.keys()].map(i => [r[i]]);
   da.a0 = [...headers].slice(1);
   da.a1 = [year, ...get_days(), "..."];
   da.ai1 = year.toString().split('');
@@ -91,4 +91,6 @@ Undo+redo
 Highlight hover row
 Highlight hover month's holidays
 Count days off per month
+Different calendar views
+Multiple year view
 */
