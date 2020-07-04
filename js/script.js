@@ -42,51 +42,37 @@ function fill_data(data, target) {
     (cell, c) => fill[headers[c + h] + (r + n)] = cell));
 }
 
-// let locale = 'en-GB';
-// function get_months(l = locale) {
-//   const months = [];
-//   for (let i = 12; i--;)
-//     months.unshift(new Date(2020, i, 1).toLocaleDateString(
-//       l, {month: 'long'}));
-//   return months;
-// }
-//
-// function get_days(l = locale) {
-//   const days = [];
-//   for (let i = 7; i--;)
-//     days.unshift(new Date(2020, 0, 6 + i).toLocaleDateString(
-//       l, {weekday: 'short'}).slice(0, 2).toUpperCase());
-//   return days;
-// }
-
-// get_names replaces the above two functions
-
-function get_names(locale = 'en-GB') {
-  const d = new Date(2020, 0, 6), names = [[], []];
-  [[7, 'Date', {weekday: 'short'}],
-  [12, 'Month', {month: 'long'}]].forEach((item, i) => {
-    let [n, s, o] = item;
-    for (; n--;) {
-      let name = d.toLocaleDateString(locale, o);
-      d['set' + s](d['get' + s]() + 1);
-      if (i < 1) name = name.slice(0, 2).toUpperCase();
-      names[i].push(name);
-    }
-  });
-  return names;
+function get_days(locale) {
+  const days = [];
+  for (let i = 7; i--;)
+    days.unshift(new Date(2020, 0, 6 + i).toLocaleDateString(
+      locale, {weekday: 'short'}).slice(0, 2).toUpperCase());
+  return days;
 }
 
-function tu_da(data) {
-  return [...data.keys()].map(i => [data[i]]);
+function fill_calendar(y = new Date().getFullYear(), locale = 'en-GB') {
+  const date = new Date(y, 0, 1), months = [];
+  while (y === date.getFullYear()) {
+    const month = [date.toLocaleDateString(locale, {month: 'long'})],
+          w = (date.getDay() + 6) % 7,
+          m = date.getMonth();
+    while (m === date.getMonth()) {
+      const d = date.getDate();
+      month[d + w] = d;
+      date.setDate(d + 1);
+    }
+    months.push(month);
+  }
+  fill_data(months, 'a2');
+  return [y, get_days(locale)];
 }
 
 function get_data(r) {
-  const year = new Date().getFullYear(), [d, m] = get_names(), da = {};
-  da._1 = tu_da(r);
+  const [year, days] = fill_calendar(), da = {};
+  da._1 = [...r.keys()].map(i => [r[i]]);
   da.a0 = [...headers].slice(1);
-  da.a1 = [year, ...d, "..."];
+  da.a1 = [year, ...days];
   da.ai1 = year.toString().split('');
-  da.a2 = tu_da(m);
   Object.keys(da).forEach(k => {
     fill_data(da[k], k);
   });
@@ -123,4 +109,8 @@ Count days off per month
 Different calendar views
 Multiple year view
 Bucket List (car, nights, kids options)
+Years view with planned holiday count per year
+DRAFT:
+document.addEventListener("DOMContentLoaded", () => console.log(
+  document.getElementsByClassName('r0').length));
 */
