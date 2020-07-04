@@ -53,17 +53,17 @@ function get_days(locale) {
 function fill_calendar(y = new Date().getFullYear(), locale = 'en-GB') {
   const date = new Date(y, 0, 1), months = [];
   while (y === date.getFullYear()) {
-    const month = [date.toLocaleDateString(locale, {month: 'long'})],
+    const name = date.toLocaleDateString(locale, {month: 'long'}),
           w = (date.getDay() + 6) % 7,
-          m = date.getMonth();
+          m = date.getMonth(),
+          row = m + 2;
     while (m === date.getMonth()) {
       const d = date.getDate();
-      month[d + w] = d;
+      fill[headers[d + w + 1] + row] = d;
       date.setDate(d + 1);
     }
-    months.push(month);
+    fill['A' + row] = name;
   }
-  fill_data(months, 'a2');
   return [y, get_days(locale)];
 }
 
@@ -113,4 +113,5 @@ Years view with planned holiday count per year
 DRAFT:
 document.addEventListener("DOMContentLoaded", () => console.log(
   document.getElementsByClassName('r0').length));
+holidays = {Dateobj: 'Good Friday' etc.}
 */
