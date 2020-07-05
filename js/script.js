@@ -44,14 +44,20 @@ function fill_data(data, target) {
   if (!Array.isArray(data[0])) data = [data];
   const [x, y] = get_xy(target);
   data.forEach((row, r) => row.forEach(
-    (cell, c) => fill[headers[c + x] + (r + y)] = [cell]));
+    (cell, c) => {
+      const ref = headers[c + x] + (r + y);
+      fill[ref] = [cell];
+      if (cell['class']) fill[ref]['class'] = cell['class'];
+    }));
 }
 
 function get_days(locale) {
   const days = [];
-  for (let i = 7; i--;)
-    days.unshift(new Date(2020, 0, 6 + i).toLocaleDateString(
-      locale, {weekday: 'short'}).slice(0, 2).toUpperCase());
+  for (let i = 7; i--;) {
+    days.unshift([new Date(2020, 0, 6 + i).toLocaleDateString(
+      locale, {weekday: 'short'}).slice(0, 2).toUpperCase()]);
+    if (i > 4) days[0]['class'] = 'weekend';
+  }
   return days;
 }
 
