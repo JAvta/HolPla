@@ -32,14 +32,19 @@ function get_headers(c = 50) {
   return headers;
 }
 
+function get_xy(target) {
+  let [x, y] = target.match(/[_A-Z]+|[0-9]+/gi);
+  x = headers.indexOf(x.toUpperCase());
+  y = Number(y);
+  return [x, y];
+}
+
 const fill = {};
 function fill_data(data, target) {
   if (!Array.isArray(data[0])) data = [data];
-  let [h, n] = target.match(/[_A-Z]+|[0-9]+/gi);
-  h = headers.indexOf(h.toUpperCase());
-  n = Number(n);
+  const [x, y] = get_xy(target);
   data.forEach((row, r) => row.forEach(
-    (cell, c) => fill[headers[c + h] + (r + n)] = cell));
+    (cell, c) => fill[headers[c + x] + (r + y)] = cell));
 }
 
 function get_days(locale) {
