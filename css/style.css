@@ -35,3 +35,7 @@ td, #A0 {
   border: 1px solid white;
   background-color: black;
 }
+
+.weekend {
+    color: #9C0006;
+}
