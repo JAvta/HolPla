@@ -51,17 +51,23 @@ function fill_data(data, target) {
     }));
 }
 
+function find_class(day) {
+  return day > 4 ? 'weekend' : 'weekday';
+}
+
 function get_days(locale) {
   const days = [];
-  for (let i = 7; i--;) {
-    days.unshift([new Date(2020, 0, 6 + i).toLocaleDateString(
-      locale, {weekday: 'short'}).slice(0, 2).toUpperCase()]);
-    if (i > 4) days[0]['class'] = 'weekend';
+  for (let day = 7; day--;) {
+    days.unshift([
+      new Date(2020, 0, 6 + day)
+      .toLocaleDateString(locale, {weekday: 'short'})
+      .slice(0, 2).toUpperCase()]);
+    days[0]['class'] = [find_class(day)];
   }
   return days;
 }
 
-function get_day(date) {
+function find_day(date) {
   return (date.getDay() + 6) % 7;
 }
 
@@ -70,13 +76,14 @@ function fill_calendar(year, target = 'a2', locale = 'en-GB') {
   const date = new Date(year, 0, 1), [x, y] = get_xy(target);
   while (year === date.getFullYear()) {
     const name = date.toLocaleDateString(locale, {month: 'long'}),
-          w = get_day(date),
+          w = find_day(date),
           m = date.getMonth(),
           row = m + y;
     while (m === date.getMonth()) {
       const d = date.getDate(), ref = headers[d + w + x] + row;
       fill[ref] = [d];
-      if (get_day(date) > 4) fill[ref]['class'] = 'weekend';
+      fill[ref]['class'] = [
+        find_class(find_day(date)), name.slice(0, 3).toUpperCase()];
       date.setDate(d + 1);
     }
     fill[headers[x] + row] = [name];
@@ -108,7 +115,7 @@ function build_table(c, r = 25) {
             classes = [c[b], 'r' + r[a]];
       if (ref in fill) {
         td.innerHTML = fill[ref][0];
-        if (fill[ref]['class']) classes.push(fill[ref]['class']);
+        if (fill[ref]['class']) classes.push(...fill[ref]['class']);
       }
       td.id = ref;
       td.classList.add(...classes);
@@ -132,6 +139,7 @@ Different calendar views
 Multiple year view
 Bucket List (car, nights, kids options)
 Years view with planned holiday count per year
+Fetch bank holidays from url
 DRAFT:
 document.addEventListener("DOMContentLoaded", () => console.log(
   document.getElementsByClassName('r0').length));
