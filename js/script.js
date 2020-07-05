@@ -44,7 +44,7 @@ function fill_data(data, target) {
   if (!Array.isArray(data[0])) data = [data];
   const [x, y] = get_xy(target);
   data.forEach((row, r) => row.forEach(
-    (cell, c) => fill[headers[c + x] + (r + y)] = cell));
+    (cell, c) => fill[headers[c + x] + (r + y)] = [cell]));
 }
 
 function get_days(locale) {
@@ -55,20 +55,25 @@ function get_days(locale) {
   return days;
 }
 
+function get_day(date) {
+  return (date.getDay() + 6) % 7;
+}
+
 function fill_calendar(year, target = 'a2', locale = 'en-GB') {
   if (!year) year = new Date().getFullYear();
-  const date = new Date(year, 0, 1), [x, y] = get_xy(target), months = [];
+  const date = new Date(year, 0, 1), [x, y] = get_xy(target);
   while (year === date.getFullYear()) {
     const name = date.toLocaleDateString(locale, {month: 'long'}),
-          w = (date.getDay() + 6) % 7,
+          w = get_day(date),
           m = date.getMonth(),
           row = m + y;
     while (m === date.getMonth()) {
-      const d = date.getDate();
-      fill[headers[d + w + x] + row] = d;
+      const d = date.getDate(), ref = headers[d + w + x] + row;
+      fill[ref] = [d];
+      if (get_day(date) > 4) fill[ref]['class'] = 'weekend';
       date.setDate(d + 1);
     }
-    fill[headers[x] + row] = name;
+    fill[headers[x] + row] = [name];
   }
   return [year, get_days(locale)];
 }
@@ -92,10 +97,15 @@ function build_table(c, r = 25) {
   for (let a = 0; a < r.length; a++) {
     const tr = document.createElement('tr');
     for (let b = 0; b < c.length; b++) {
-      const td = document.createElement('td'), cell = c[b] + r[a];
-      if (cell in fill) td.innerHTML = fill[cell];
-      td.classList.add(c[b], 'r' + r[a]);
-      td.id = cell;
+      const td = document.createElement('td'),
+            ref = c[b] + r[a],
+            classes = [c[b], 'r' + r[a]];
+      if (ref in fill) {
+        td.innerHTML = fill[ref][0];
+        if (fill[ref]['class']) classes.push(fill[ref]['class']);
+      }
+      td.id = ref;
+      td.classList.add(...classes);
       tr.appendChild(td);
     }
     table.appendChild(tr);
