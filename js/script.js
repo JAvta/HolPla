@@ -55,21 +55,22 @@ function get_days(locale) {
   return days;
 }
 
-function fill_calendar(y = new Date().getFullYear(), locale = 'en-GB') {
-  const date = new Date(y, 0, 1), months = [];
-  while (y === date.getFullYear()) {
+function fill_calendar(year, target = 'a2', locale = 'en-GB') {
+  if (!year) year = new Date().getFullYear();
+  const date = new Date(year, 0, 1), [x, y] = get_xy(target), months = [];
+  while (year === date.getFullYear()) {
     const name = date.toLocaleDateString(locale, {month: 'long'}),
           w = (date.getDay() + 6) % 7,
           m = date.getMonth(),
-          row = m + 2;
+          row = m + y;
     while (m === date.getMonth()) {
       const d = date.getDate();
-      fill[headers[d + w + 1] + row] = d;
+      fill[headers[d + w + x] + row] = d;
       date.setDate(d + 1);
     }
-    fill['A' + row] = name;
+    fill[headers[x] + row] = name;
   }
-  return [y, get_days(locale)];
+  return [year, get_days(locale)];
 }
 
 function get_data(r) {
