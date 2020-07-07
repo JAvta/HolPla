@@ -8,7 +8,7 @@ function combine_abx(a, b, x) {
   }
 }
 
-const headers = ['_']
+const headers = ['_'];
 function get_headers(c = 50) {
   const abc = 26, z = {};
   z.h0 = [...Array(abc).keys()].map(i => String.fromCharCode(i + 65));
@@ -51,6 +51,30 @@ function fill_data(data, target) {
     }));
 }
 
+function three_upper(string) {
+  return string.slice(0, 3).toUpperCase();
+}
+
+function find_banks(year, banks = []) {
+  `
+  2020
+  1 January	Wednesday	New Year’s Day
+  10 April	Friday	Good Friday
+  13 April	Monday	Easter Monday
+  8 May	Friday	Early May bank holiday (VE day)
+  25 May	Monday	Spring bank holiday
+  31 August	Monday	Summer bank holiday
+  25 December	Friday	Christmas Day
+  28 December	Monday	Boxing Day (substitute day)
+  `.split('\n').forEach(line => {
+    line = line.split('	');
+    const [date, name] = [line[0].trim().split(' '), line[2]];
+    if (name) banks[date[0] + three_upper(date[1])] = name;
+  });
+  banks.unshift([[year]]);
+  return banks;
+}
+
 function find_class(day) {
   return day > 4 ? 'weekend' : 'weekday';
 }
@@ -71,24 +95,39 @@ function find_day(date) {
   return (date.getDay() + 6) % 7;
 }
 
-function fill_calendar(year, target = 'a2', locale = 'en-GB') {
-  if (!year) year = new Date().getFullYear();
-  const date = new Date(year, 0, 1), [x, y] = get_xy(target);
+function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
+  const today = new Date();
+  if (!year) year = today.getFullYear();
+  if (!banks) banks = find_banks(year);
+  const date = new Date(year, 0, 1),
+        days = get_days(locale),
+        [x, y] = get_xy(target);
   while (year === date.getFullYear()) {
     const name = date.toLocaleDateString(locale, {month: 'long'}),
+          abbr = three_upper(name),
           w = find_day(date),
           m = date.getMonth(),
           row = m + y;
+    fill[headers[x] + row] = [name];
     while (m === date.getMonth()) {
-      const d = date.getDate(), ref = headers[d + w + x] + row;
+      const d = date.getDate(),
+            ref = headers[d + w + x] + row,
+            key = d + abbr,
+            day = find_day(date),
+            classes = [find_class(day), abbr];
       fill[ref] = [d];
-      fill[ref]['class'] = [
-        find_class(find_day(date)), name.slice(0, 3).toUpperCase()];
+      if (key in banks) {
+        classes.unshift('bank');
+        banks[0].push([days[day][0], d + ' ' + abbr, banks[key]]);
+      }
+      if (date.toDateString() === today.toDateString()) {
+        classes.unshift('today');
+      }
+      fill[ref]['class'] = [...classes];
       date.setDate(d + 1);
     }
-    fill[headers[x] + row] = [name];
   }
-  return [year, get_days(locale)];
+  return [year, days];
 }
 
 function get_data(r) {
