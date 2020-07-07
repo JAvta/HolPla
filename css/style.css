@@ -6,10 +6,6 @@ table {
   border-collapse: collapse;
 }
 
-table, td {
-  border: 1px solid transparent;
-}
-
 tr {
   vertical-align: middle;
 }
@@ -37,5 +33,23 @@ td, #A0 {
 }
 
 .weekend {
-    color: #9C0006;
+  color: #9C0006;
+}
+
+.weekend, .weekday {
+  border: 1px solid white;
+}
+
+.days-header {
+  font-size: 10px;
+}
+
+.bank {
+  color: white;
+  background-color: #F79646;
+}
+
+.today {
+  outline: 1px solid #9C0006;
+  outline-offset: -1px;
 }
