@@ -82,11 +82,9 @@ function find_class(day) {
 function get_days(locale) {
   const days = [];
   for (let day = 7; day--;) {
-    days.unshift([
-      new Date(2020, 0, 6 + day)
-      .toLocaleDateString(locale, {weekday: 'short'})
-      .slice(0, 2).toUpperCase()]);
-    days[0]['class'] = [find_class(day)];
+    days.unshift([three_upper(new Date(2020, 0, 6 + day)
+      .toLocaleDateString(locale, {weekday: 'short'}))]);
+    days[0]['class'] = ['days-header', find_class(day)];
   }
   return days;
 }
@@ -182,5 +180,7 @@ Fetch bank holidays from url
 DRAFT:
 document.addEventListener("DOMContentLoaded", () => console.log(
   document.getElementsByClassName('r0').length));
+$0.classList[$0.classList.length - 1];
+$0.innerText;
 holidays = {Dateobj: 'Good Friday' etc.}
 */
