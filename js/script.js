@@ -94,6 +94,16 @@ function find_day(date) {
 }
 
 function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
+  const plans = {
+    '17FEB': {},
+    '9MAR': {end: '11MAR'},
+    '20AUG': {end: '25AUG', desc: 'IS'},
+    '18SEP': {},
+    '1OCT': {end: '23OCT'},
+    '2DEC': {end: '4DEC'},
+    '31DEC': {desc: 'LV'}
+  };
+  let end, planned = false;
   const today = new Date();
   if (!year) year = today.getFullYear();
   if (!banks) banks = find_banks(year);
@@ -120,8 +130,17 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
         ['banklist-days', 'banklist-dates', 'banklist-names'].forEach(
           (item, i) => banks[0][banks[0].length - 1][i]['class'] = [item]);
       }
+      if (end || key in plans) {
+        planned ? classes.unshift('planned') : classes.unshift('passed');
+        if (key in plans && 'end' in plans[key]) {
+          end = plans[key]['end'];
+        } else if (key === end) {
+          end = 0;
+        }
+      }
       if (date.toDateString() === today.toDateString()) {
         classes.unshift('today');
+        planned = true;
       }
       fill[ref]['class'] = [...classes];
       date.setDate(d + 1);
@@ -174,6 +193,7 @@ Confirm before replacing data
 Undo+redo
 Highlight hover row
 Highlight hover month's holidays
+Highlight hover holidays/hide on click
 Count days off per month
 Different calendar views
 Multiple year view
