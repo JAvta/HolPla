@@ -36,8 +36,24 @@ td, #A0 {
   background-color: black;
 }
 
+.past {
+  color: #460098;
+  background-color: #ccc0da;
+}
+
+.plan {
+  color: #00485a;
+  background-color: #b7dee8;
+}
+
+.bank {
+  color: #6f3401;
+  background-color: #fcd5b4;
+}
+
 .weekend {
-  color: #9C0006;
+  color: #9c0006;
+  background-color: inherit;
 }
 
 .weekend, .weekday {
@@ -61,12 +77,7 @@ td, #A0 {
   padding-left: 6px;
 }
 
-.bank {
-  color: white;
-  background-color: #F79646;
-}
-
 .today {
-  outline: 1px solid #9C0006;
+  outline: 1px solid #9c0006;
   outline-offset: -1px;
 }
