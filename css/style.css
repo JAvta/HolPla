@@ -40,8 +40,21 @@ td, #A0 {
   border: 1px solid white;
 }
 
-.days-header {
-  font-size: 10px;
+.banklist-days, .week-days {
+  font-size: 9px;
+}
+
+.banklist-dates, .banklist-names {
+  white-space: nowrap;
+}
+
+.banklist-dates {
+  text-align: right;
+}
+
+.banklist-names {
+  text-align: left;
+  padding-left: 6px;
 }
 
 .bank {
