@@ -69,9 +69,9 @@ function find_banks(year, banks = []) {
   `.split('\n').forEach(line => {
     line = line.split('	');
     const [date, name] = [line[0].trim().split(' '), line[2]];
-    if (name) banks[date[0] + three_upper(date[1])] = name;
+    if (name) banks[three_upper(date[1]) + date[0]] = name;
   });
-  banks[0] = [[[], [], year + ' Bank Holidays']];
+  banks[0] = [[[], [], [year + ' Bank Holidays']]];
   return banks;
 }
 
@@ -95,15 +95,15 @@ function find_day(date) {
 
 function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
   const plans = {
-    '17FEB': {},
-    '9MAR': {end: '11MAR'},
-    '20AUG': {end: '25AUG', desc: 'IS'},
-    '18SEP': {},
-    '1OCT': {end: '23OCT'},
-    '2DEC': {end: '4DEC'},
-    '31DEC': {desc: 'LV'}
+    FEB17: {},
+    MAR9: {end: 'MAR11'},
+    AUG20: {end: 'AUG25', desc: 'IS'},
+    SEP18: {},
+    OCT1: {end: 'OCT23'},
+    DEC2: {end: 'DEC4'},
+    DEC31: {desc: 'LV'}
   };
-  let end, planned = false;
+  let end, planned = 'past';
   const today = new Date();
   if (!year) year = today.getFullYear();
   if (!banks) banks = find_banks(year);
@@ -120,7 +120,7 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
     while (m === date.getMonth()) {
       const d = date.getDate(),
             ref = headers[d + w + x] + row,
-            key = d + abbr,
+            key = abbr + d,
             day = find_day(date),
             classes = [find_class(day), abbr];
       fill[ref] = [d];
@@ -131,7 +131,7 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
           (item, i) => banks[0][banks[0].length - 1][i]['class'] = [item]);
       }
       if (end || key in plans) {
-        planned ? classes.unshift('planned') : classes.unshift('passed');
+        classes.unshift('holiday', planned);
         if (key in plans && 'end' in plans[key]) {
           end = plans[key]['end'];
         } else if (key === end) {
@@ -140,7 +140,7 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
       }
       if (date.toDateString() === today.toDateString()) {
         classes.unshift('today');
-        planned = true;
+        planned = 'plan';
       }
       fill[ref]['class'] = [...classes];
       date.setDate(d + 1);
