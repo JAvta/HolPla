@@ -9,7 +9,7 @@ function combine_abx(a, b, x) {
 }
 
 const headers = ['_'];
-function get_headers(c = 50) {
+function get_headers(c = 48) {
   const abc = 26, z = {};
   z.h0 = [...Array(abc).keys()].map(i => String.fromCharCode(i + 65));
   if (c > abc) {
@@ -32,7 +32,7 @@ function get_headers(c = 50) {
   return headers;
 }
 
-function get_xy(target) {
+function find_xy(target) {
   let [x, y] = target.match(/[_A-Z]+|[0-9]+/gi);
   x = headers.indexOf(x.toUpperCase());
   y = Number(y);
@@ -42,7 +42,7 @@ function get_xy(target) {
 const fill = {};
 function fill_data(data, target) {
   if (!Array.isArray(data[0])) data = [data];
-  const [x, y] = get_xy(target);
+  const [x, y] = find_xy(target);
   data.forEach((row, r) => row.forEach(
     (cell, c) => {
       const ref = headers[c + x] + (r + y);
@@ -71,7 +71,7 @@ function find_banks(year, banks = []) {
     const [date, name] = [line[0].trim().split(' '), line[2]];
     if (name) banks[date[0] + three_upper(date[1])] = name;
   });
-  banks.unshift([[year]]);
+  banks[0] = [[[], [], year + ' Bank Holidays']];
   return banks;
 }
 
@@ -84,7 +84,7 @@ function get_days(locale) {
   for (let day = 7; day--;) {
     days.unshift([three_upper(new Date(2020, 0, 6 + day)
       .toLocaleDateString(locale, {weekday: 'short'}))]);
-    days[0]['class'] = ['days-header', find_class(day)];
+    days[0]['class'] = ['week-days', find_class(day)];
   }
   return days;
 }
@@ -99,7 +99,7 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
   if (!banks) banks = find_banks(year);
   const date = new Date(year, 0, 1),
         days = get_days(locale),
-        [x, y] = get_xy(target);
+        [x, y] = find_xy(target);
   while (year === date.getFullYear()) {
     const name = date.toLocaleDateString(locale, {month: 'long'}),
           abbr = three_upper(name),
@@ -116,7 +116,9 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
       fill[ref] = [d];
       if (key in banks) {
         classes.unshift('bank');
-        banks[0].push([days[day][0], d + ' ' + abbr, banks[key]]);
+        banks[0].push([[days[day][0]], [d + ' ' + abbr], [banks[key]]]);
+        ['banklist-days', 'banklist-dates', 'banklist-names'].forEach(
+          (item, i) => banks[0][banks[0].length - 1][i]['class'] = [item]);
       }
       if (date.toDateString() === today.toDateString()) {
         classes.unshift('today');
@@ -125,15 +127,16 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
       date.setDate(d + 1);
     }
   }
-  return [year, days];
+  return [year, days, banks[0]];
 }
 
 function get_data(r) {
-  const [year, days] = fill_calendar(), da = {};
+  const [year, days, banks] = fill_calendar(), da = {};
   da._1 = [...r.keys()].map(i => [r[i]]);
   da.a0 = [...headers].slice(1);
   da.a1 = [year, ...days];
   da.ai1 = year.toString().split('');
+  da.at18 = banks;
   Object.keys(da).forEach(k => {
     fill_data(da[k], k);
   });
@@ -177,6 +180,16 @@ Multiple year view
 Bucket List (car, nights, kids options)
 Years view with planned holiday count per year
 Fetch bank holidays from url
+Spray mode
+Screenshot a planned holiday
+Print holidays
+Suggest holiday dates for ones picked from BL
+Save on exit
+Login
+Export/import/share
+Sync
+Custom fonts
+Dark mode
 DRAFT:
 document.addEventListener("DOMContentLoaded", () => console.log(
   document.getElementsByClassName('r0').length));
