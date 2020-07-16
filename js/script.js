@@ -45,9 +45,9 @@ function fill_data(data, target) {
   const [x, y] = find_xy(target);
   data.forEach((row, r) => row.forEach(
     (cell, c) => {
-      const ref = headers[c + x] + (r + y);
+      const ref = headers[c + x] + (r + y), cn = cell.className;
       fill[ref] = [cell];
-      if (cell['class']) fill[ref]['class'] = cell['class'];
+      if (cn) fill[ref].className = cn;
     }));
 }
 
@@ -55,7 +55,7 @@ function three_upper(string) {
   return string.slice(0, 3).toUpperCase();
 }
 
-function find_banks(year, banks = []) {
+function find_banks(year, banks = {}) {
   `
   2020
   1 January	Wednesday	New Year’s Day
@@ -68,15 +68,19 @@ function find_banks(year, banks = []) {
   28 December	Monday	Boxing Day (substitute day)
   `.split('\n').forEach(line => {
     line = line.split('	');
-    const [date, name] = [line[0].trim().split(' '), line[2]];
-    if (name) banks[three_upper(date[1]) + date[0]] = name;
+    const [dateB, nameB] = [line[0].trim().split(' '), line[2]];
+    if (nameB) banks[three_upper(dateB[1]) + dateB[0]] = nameB;
   });
-  banks[0] = [[[], [], [year + ' Bank Holidays']]];
+  banks.list = [[[], [], [year + ' Bank Holidays']]];
   return banks;
 }
 
-function find_class(day) {
-  return day > 4 ? 'weekend' : 'weekday';
+function is_weekend(day) {
+  return day > 4 ? true : false;
+}
+
+function find_class(weekend) {
+  return weekend ? 'weekend' : 'weekday';
 }
 
 function get_days(locale) {
@@ -84,7 +88,7 @@ function get_days(locale) {
   for (let day = 7; day--;) {
     days.unshift([three_upper(new Date(2020, 0, 6 + day)
       .toLocaleDateString(locale, {weekday: 'short'}))]);
-    days[0]['class'] = ['week-days', find_class(day)];
+    days[0].className = ['week-days', find_class(is_weekend(day))];
   }
   return days;
 }
@@ -111,24 +115,25 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
         days = get_days(locale),
         [x, y] = find_xy(target);
   while (year === date.getFullYear()) {
-    const name = date.toLocaleDateString(locale, {month: 'long'}),
-          abbr = three_upper(name),
+    const nameM = date.toLocaleDateString(locale, {month: 'long'}),
+          abbrM = three_upper(nameM),
           w = find_day(date),
           m = date.getMonth(),
           row = m + y;
-    fill[headers[x] + row] = [name];
+    fill[headers[x] + row] = [nameM];
     while (m === date.getMonth()) {
       const d = date.getDate(),
             ref = headers[d + w + x] + row,
-            key = abbr + d,
+            key = abbrM + d,
             day = find_day(date),
-            classes = [find_class(day), abbr];
+            weekend = is_weekend(day),
+            classes = [find_class(weekend), abbrM];
       fill[ref] = [d];
       if (key in banks) {
         classes.unshift('bank');
-        banks[0].push([[days[day][0]], [d + ' ' + abbr], [banks[key]]]);
+        banks.list.push([[days[day][0]], [d + ' ' + abbrM], [banks[key]]]);
         ['banklist-days', 'banklist-dates', 'banklist-names'].forEach(
-          (item, i) => banks[0][banks[0].length - 1][i]['class'] = [item]);
+          (item, i) => banks.list[banks.list.length - 1][i].className = [item]);
       }
       if (end || key in plans) {
         classes.unshift('holiday', planned);
@@ -142,20 +147,20 @@ function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
         classes.unshift('today');
         planned = 'plan';
       }
-      fill[ref]['class'] = [...classes];
+      fill[ref].className = [...classes];
       date.setDate(d + 1);
     }
   }
-  return [year, days, banks[0]];
+  return [year, days, banks.list];
 }
 
 function get_data(r) {
-  const [year, days, banks] = fill_calendar(), da = {};
+  const [year, days, banklist] = fill_calendar(), da = {};
   da._1 = [...r.keys()].map(i => [r[i]]);
   da.a0 = [...headers].slice(1);
   da.a1 = [year, ...days];
   da.ai1 = year.toString().split('');
-  da.at18 = banks;
+  da.at18 = banklist;
   Object.keys(da).forEach(k => {
     fill_data(da[k], k);
   });
@@ -174,7 +179,7 @@ function build_table(c, r = 25) {
             classes = [c[b], 'r' + r[a]];
       if (ref in fill) {
         td.innerHTML = fill[ref][0];
-        if (fill[ref]['class']) classes.push(...fill[ref]['class']);
+        if (fill[ref].className) classes.push(...fill[ref].className);
       }
       td.id = ref;
       td.classList.add(...classes);
@@ -210,6 +215,7 @@ Export/import/share
 Sync
 Custom fonts
 Dark mode
+Weekend and banks depend on locale
 DRAFT:
 document.addEventListener("DOMContentLoaded", () => console.log(
   document.getElementsByClassName('r0').length));
