@@ -99,8 +99,8 @@ function find_day(date) {
 
 function fill_calendar(year, banks, target = 'a2', locale = 'en-GB') {
   const plans = {
-    FEB17: {},
-    MAR9: {end: 'MAR11'},
+    JAN4: {end: 'JAN6'},
+    JAN18: {},
     AUG20: {end: 'AUG25', desc: 'IS'},
     SEP18: {},
     OCT1: {end: 'OCT23'},
