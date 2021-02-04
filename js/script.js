@@ -160,7 +160,7 @@ function get_data(r) {
   da.a0 = [...headers].slice(1);
   da.a1 = [year, ...days];
   da.ai1 = year.toString().split('');
-  da.at18 = banklist;
+  da.at17 = banklist;
   Object.keys(da).forEach(k => {
     fill_data(da[k], k);
   });
