@@ -57,15 +57,15 @@ function three_upper(string) {
 
 function find_banks(year, banks = {}) {
   `
-  2020
+  2021
   1 January	Wednesday	New Year’s Day
-  10 April	Friday	Good Friday
-  13 April	Monday	Easter Monday
-  8 May	Friday	Early May bank holiday (VE day)
-  25 May	Monday	Spring bank holiday
-  31 August	Monday	Summer bank holiday
-  25 December	Friday	Christmas Day
-  28 December	Monday	Boxing Day (substitute day)
+  2 April	Friday	Good Friday
+  5 April	Monday	Easter Monday
+  3 May	Monday	Early May bank holiday
+  31 May	Monday	Spring bank holiday
+  30 August	Monday	Summer bank holiday
+  27 December	Monday	Christmas Day (substitute day)
+  28 December	Tuesday	Boxing Day (substitute day)
   `.split('\n').forEach(line => {
     line = line.split('	');
     const [dateB, nameB] = [line[0].trim().split(' '), line[2]];
